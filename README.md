@@ -32,4 +32,5 @@ This was one of my first deep dives into C# and much of the heavy lifting was al
 * <a href="https://twitter.com/_RastaMouse/">_RastaMouse</a> - <a href="https://github.com/rasta-mouse/AmsiScanBufferBypass/blob/master/ASBBypass/Program.cs">AMSI Bypass</a>
 
 ## Notes
-Checkout <a href="https://github.com/Flangvik/SharpCollection">SharpCollection</a> for hosted payloads to test it out!
+* Built with .Net 4.0
+* Checkout <a href="https://github.com/Flangvik/SharpCollection">SharpCollection</a> for hosted payloads to test it out!
